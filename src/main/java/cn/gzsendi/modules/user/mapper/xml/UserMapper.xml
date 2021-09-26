@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gzsendi.modules.user.mapper.UserMapper">
+
+	<sql id="listSql">
+		select id,username,age from t_user
+	</sql>
+
+	<select id="export" parameterType="user" resultType="user" resultSetType="FORWARD_ONLY" fetchSize="-2147483648">
+		<include refid="listSql" />
+	</select>
+
+	<select id="resultHandlerTest" parameterType="user" resultType="user" resultSetType="FORWARD_ONLY" fetchSize="-2147483648">
+		<include refid="listSql" />
+	</select>
+
+	<select id="queryById" resultType="user" parameterType="java.lang.Integer">
+		select id,username,age from t_user where id = #{id}
+	</select>
+	
+	<insert id="batchInsert">
+		insert into t_user(username,age)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.username},#{item.age})
+		</foreach>
+	</insert>
+
+</mapper>
