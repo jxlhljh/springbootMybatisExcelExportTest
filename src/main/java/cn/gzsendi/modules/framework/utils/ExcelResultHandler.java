@@ -22,6 +22,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import cn.gzsendi.modules.framework.reflect.Reflector;
 import cn.gzsendi.modules.framework.reflect.reflectasm.MethodAccessor;
@@ -89,7 +91,7 @@ public abstract class ExcelResultHandler<T> implements ResultHandler<T>{
 	/**导出*/
 	public void startExportExcel() {
 		
-		HttpServletResponse response = ContextHolderUtils.getResponse();
+		HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 		
 		ZipOutputStream zos = null;
 		OutputStream os = null;
