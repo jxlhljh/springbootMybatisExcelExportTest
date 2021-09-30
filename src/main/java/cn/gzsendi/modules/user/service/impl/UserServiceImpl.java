@@ -8,7 +8,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.gzsendi.modules.framework.utils.ExportExcelUtils;
+import cn.gzsendi.modules.framework.utils.ExcelResultHandler;
 import cn.gzsendi.modules.user.mapper.UserMapper;
 import cn.gzsendi.modules.user.model.User;
 import cn.gzsendi.modules.user.service.UserService;
@@ -53,8 +53,21 @@ public class UserServiceImpl implements UserService{
 
 		//定义要导出的excel的文件名，不带"xlsx"后缀。
 		String exportExcelFileName = "文件测试";
+		
+		//每次导出new一个handler对象，将headerArray,fieldArray,exportExcelFileName传递进去。
+		ExcelResultHandler<User> handler = new ExcelResultHandler<User>(headerArray,fieldArray,exportExcelFileName) {
+			public void tryFetchDataAndWriteToExcel() {
+				//这里的this,指的就是ExcelResultHandler<User> handler这个对象，在这里写mapper调用获取数据的调用
+				userMapper.export(this);
+			}
+		};
+		
+		//真正调用excel的导出开始，在方法中exportExcel会调用写excel表头，
+		//然后调用tryFetchDataAndWriteToExcel，进行驱动调用userMapper的方法，然后遍历结果集，一条一条写入excel,最后关闭盯应的流资源。
+		handler.startExportExcel();
 
-		//调用ExportExcelUtils的公共方法进行excel的导出
+		/**下面的方式类似，只是封装的方式不一样**/
+		/*//调用ExportExcelUtils的公共方法进行excel的导出
 		new ExportExcelUtils(headerArray,fieldArray,exportExcelFileName) {
 			
 			public void tryFetchDataAndWriteToExcel() {
@@ -74,6 +87,6 @@ public class UserServiceImpl implements UserService{
 
 			}
 			
-		}.export();
+		}.export();*/
 	}
 }
